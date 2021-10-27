@@ -11,6 +11,7 @@ GREEN = (0, 255, 0)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 
+
 class MainWindow:
     def __init__(self):
         self.window = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -22,7 +23,8 @@ class MainWindow:
         self.slider = Slider(self.window)
         self.score = 0
 
-    def draw_func(self, slider):
+
+    def draw_func(self):
         self.window.fill(WHITE)
         score_text = self.font.render(f'Score: {self.score}', 1, GREEN)
         pygame.draw.rect(self.window, BLACK, self.slider.background)
@@ -53,7 +55,12 @@ class MainWindow:
                             print('button was pressed at {0}'.format(mouse_pos))
                             state = "slider"
                 if state == "slider":
-                    self.draw_func(self.slider)
+                    self.draw_func()
+                if state == "slider" and event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE and self.slider.hit_check():
+                        self.score += 1
+                    else:
+                        self.score -= 1
 
 
 if __name__ == "__main__":

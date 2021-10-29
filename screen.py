@@ -8,7 +8,7 @@ HEIGHT = 700
 FPS = 60
 
 WHITE = (255, 255, 255)
-GREEN = (0, 255, 0)
+
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 
@@ -18,17 +18,29 @@ class MainWindow:
         self.window = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption("sliders demo")
         pygame.font.init()
-        self.font = pygame.font.SysFont('timesnewroman', 40)
+        self.font = pygame.font.SysFont('Roboto', 28)
         self.clock = pygame.time.Clock()
         self.menu = Menu(self.window)
         self.slider = Slider(self.window)
         self.score = 0
+        self.dude_counter = 0
+        self.chief = self.slider.chief_1
 
     def draw_func(self):
-        self.window.fill(WHITE)
-        score_text = self.font.render(f'Score: {self.score}', 1, GREEN)
+        self.window.blit(self.slider.bg_picture, (0, 0))
+        score_text = self.font.render(f'{self.score}', 1, BLACK)
+
+        self.dude_counter += 1
+
+        if self.dude_counter % 30 == 0:
+            if self.chief == self.slider.chief_1:
+                self.chief = self.slider.chief_2
+            else:
+                self.chief = self.slider.chief_1
+        self.window.blit(self.chief, (391, 216))
+
         pygame.draw.rect(self.window, BLACK, self.slider.background)
-        self.window.blit(score_text, (self.window.get_width() // 2 - score_text.get_width() // 2, 20))
+        self.window.blit(score_text, (929, 63))
         if len(self.slider.dots_list) <= 0:
             for _ in range(3):
                 self.slider.generate_dot()
@@ -36,7 +48,7 @@ class MainWindow:
         for dot in self.slider.dots_list:
             pygame.draw.rect(self.window, RED, dot)
         self.slider.move_slider()
-        pygame.draw.rect(self.window, GREEN, self.slider.slider)
+        pygame.draw.rect(self.window, 'GREEN', self.slider.slider)
 
     def main_logic(self):
         run = True

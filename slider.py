@@ -1,3 +1,4 @@
+import os.path
 import random
 import pygame
 
@@ -9,6 +10,11 @@ SLIDER_VEL = 3
 class Slider:
 
     def __init__(self, win):
+        self.bg_picture = pygame.image.load(os.path.join('assets', 'slider_bg.png')).convert()
+        self.chief_1 = pygame.transform.scale(pygame.image.load(os.path.join('assets', 'dood_1.png')).convert_alpha(), (371, 390))
+        self.chief_2 = pygame.transform.scale(pygame.image.load(os.path.join('assets', 'dood_2.png')).convert_alpha(), (371, 390))
+
+
         self.background = pygame.Rect(win.get_width() // 2 - 250, win.get_height() // 2 - 25, 500, 50)
         self.dots_list = []
         self.slider_vector = "right"

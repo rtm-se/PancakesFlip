@@ -10,15 +10,21 @@ class Menu:
     def __init__(self, window):
         self.window = window
         self.bg = pygame.image.load(os.path.join("assets", "menu_bg.png"))
-        self.window.blit(self.bg, (0, 0))
         self.button1 = Button(self.window, (self.window.get_width() / 100) * 35.9,
-                              (self.window.get_height() / 100) * 58.9, "button_1.png")
+                              (self.window.get_height() / 100) * 58.9, "button1-static.png", "button1-HW.png")
         self.button2 = Button(self.window, (self.window.get_width() / 100) * 35.9,
-                              (self.window.get_height() / 100) * 68.7, "button_2.png")
+                              (self.window.get_height() / 100) * 68.7, "button2-static.png", "button2-HW.png")
         self.button3 = Button(self.window, (self.window.get_width() / 100) * 35.9,
-                              (self.window.get_height() / 100) * 78.5, "button_3.png")
+                              (self.window.get_height() / 100) * 78.5, "button3-static.png", "button3-HW.png")
 
-        # pygame.draw.rect(self.window, WHITE, [self.window.get_width()/2, self.window.get_height()/2, 140, 40])
-        pygame.display.update()
+        self.list_of_buttons = []
+        self.add_buttons()
+
+
+
+    def add_buttons(self):
+        self.list_of_buttons.append(self.button1)
+        self.list_of_buttons.append(self.button2)
+        self.list_of_buttons.append(self.button3)
 
 

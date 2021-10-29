@@ -1,5 +1,4 @@
 import sys
-
 import pygame
 from menu import Menu
 from slider import Slider
@@ -25,7 +24,6 @@ class MainWindow:
         self.slider = Slider(self.window)
         self.score = 0
 
-
     def draw_func(self):
         self.window.fill(WHITE)
         score_text = self.font.render(f'Score: {self.score}', 1, GREEN)
@@ -40,17 +38,17 @@ class MainWindow:
         self.slider.move_slider()
         pygame.draw.rect(self.window, GREEN, self.slider.slider)
 
-        pygame.display.update()
-
     def main_logic(self):
         run = True
         state = "main_menu"
         while run:
             self.clock.tick(FPS)
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
+
                 if state == "main_menu":
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         mouse_pos = event.pos
@@ -62,9 +60,19 @@ class MainWindow:
                         self.score += 1
                     else:
                         self.score -= 1
+
             if state == "slider":
                 self.draw_func()
 
+            if state == "main_menu":
+
+                self.window.blit(self.menu.bg, (0, 0))
+                for button in self.menu.list_of_buttons:
+                    if button.rect.collidepoint(pygame.mouse.get_pos()):
+                        button.draw_button_active()
+                    else:
+                        button.draw_button_static()
+            pygame.display.update()
 
 
 if __name__ == "__main__":

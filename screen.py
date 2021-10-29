@@ -11,6 +11,7 @@ WHITE = (255, 255, 255)
 
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
+PAN_COLOR = '#FFAD7E'
 
 
 class MainWindow:
@@ -18,7 +19,7 @@ class MainWindow:
         self.window = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption("sliders demo")
         pygame.font.init()
-        self.font = pygame.font.SysFont('Roboto', 28)
+        self.font = pygame.font.SysFont('Roboto', 40)
         self.clock = pygame.time.Clock()
         self.menu = Menu(self.window)
         self.slider = Slider(self.window)
@@ -39,14 +40,14 @@ class MainWindow:
                 self.chief = self.slider.chief_1
         self.window.blit(self.chief, (391, 216))
 
-        pygame.draw.rect(self.window, BLACK, self.slider.background)
+        self.window.blit(self.slider.bar_picture, self.slider.bar_rect)
         self.window.blit(score_text, (929, 63))
         if len(self.slider.dots_list) <= 0:
             for _ in range(3):
                 self.slider.generate_dot()
 
         for dot in self.slider.dots_list:
-            pygame.draw.rect(self.window, RED, dot)
+            pygame.draw.rect(self.window, PAN_COLOR, dot)
         self.slider.move_slider()
         pygame.draw.rect(self.window, 'GREEN', self.slider.slider)
 
@@ -65,7 +66,7 @@ class MainWindow:
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         mouse_pos = event.pos
                         if self.menu.button1.rect.collidepoint(mouse_pos):
-                            print('button was pressed at {0}'.format(mouse_pos))
+
                             state = "slider"
                 if state == "slider" and event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE and self.slider.hit_check():

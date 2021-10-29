@@ -1,3 +1,5 @@
+import sys
+
 import pygame
 from menu import Menu
 from slider import Slider
@@ -48,19 +50,21 @@ class MainWindow:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
+                    sys.exit()
                 if state == "main_menu":
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         mouse_pos = event.pos
                         if self.menu.button1.rect.collidepoint(mouse_pos):
                             print('button was pressed at {0}'.format(mouse_pos))
                             state = "slider"
-                if state == "slider":
-                    self.draw_func()
                 if state == "slider" and event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE and self.slider.hit_check():
                         self.score += 1
                     else:
                         self.score -= 1
+            if state == "slider":
+                self.draw_func()
+
 
 
 if __name__ == "__main__":

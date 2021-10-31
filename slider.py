@@ -6,7 +6,8 @@ BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 SLIDER_VEL = 3
 
-
+#TODO add lives
+#TODO add endgame screen
 
 class Slider:
 

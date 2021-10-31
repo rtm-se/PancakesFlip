@@ -2,7 +2,7 @@ import sys
 import pygame
 from menu import Menu
 from slider import Slider
-
+from credits import Credits
 WIDTH = 1024
 HEIGHT = 700
 FPS = 60
@@ -26,7 +26,7 @@ class MainWindow:
         self.score = 0
         self.dude_counter = 0
         self.chief = self.slider.chief_1
-
+        self.credits = Credits()
     def draw_func(self):
         self.window.blit(self.slider.bg_picture, (0, 0))
         score_text = self.font.render(f'{self.score}', 1, BLACK)
@@ -66,8 +66,13 @@ class MainWindow:
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         mouse_pos = event.pos
                         if self.menu.button1.rect.collidepoint(mouse_pos):
-
+                            print('slider')
                             state = "slider"
+                        elif self.menu.button3.rect.collidepoint(mouse_pos):
+                            print('credits')
+                            state = 'credits'
+                if state == "credits" and event.type == pygame.KEYDOWN:
+                    state = 'main_menu'
                 if state == "slider" and event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE and self.slider.hit_check():
                         self.score += 1
@@ -76,7 +81,8 @@ class MainWindow:
 
             if state == "slider":
                 self.draw_func()
-
+            if state == "credits":
+                self.window.blit(self.credits.image, (0 ,0))
             if state == "main_menu":
 
                 self.window.blit(self.menu.bg, (0, 0))

@@ -1,35 +1,48 @@
 import os.path
 import random
 import pygame
+from random import randint
+from dot import Dot
+from slider_bar import SliderBar
+from chief import Chief
 
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
-SLIDER_VEL = 3
 
-#TODO add lives
-#TODO add endgame screen
+PAN_COLOR = '#FFAD7E'
+
+
+#TODO add endgame state and screen
 
 class Slider:
 
     def __init__(self, win):
+        self.lives = 3
+        self.score = 0
+        self.window = win
+
         self.bg_picture = pygame.image.load(os.path.join('assets', 'slider_bg.png')).convert()
-        self.chief_1 = pygame.transform.scale(pygame.image.load(os.path.join('assets', 'dood_1.png')).convert_alpha(), (371, 390))
-        self.chief_2 = pygame.transform.scale(pygame.image.load(os.path.join('assets', 'dood_2.png')).convert_alpha(), (371, 390))
         self.bar_picture = pygame.image.load(os.path.join('assets', 'bar.png')).convert_alpha()
-        self.bar_rect = self.bar_picture.get_rect(topleft = (325, 139))
+        self.bar_rect = self.bar_picture.get_rect(topleft=(332, 139))
 
-        self.dots_list = []
-        self.slider_vector = "right"
-        self.slider = self.generate_slider()
+        self.font = pygame.font.SysFont('Roboto', 40)
+        self.lives_text = self.font.render(f'{self.lives}', 1, BLACK)
 
+        self.chief = pygame.sprite.Group()
+        self.chief.add(Chief())
+
+        self.dot_group = pygame.sprite.Group()
+
+        self.slider_bar = pygame.sprite.GroupSingle()
+        self.slider_bar.add(SliderBar(self.bar_rect, self.bar_rect.x + 50, self.bar_rect.y))
+
+    '''
     def generate_dot(self):
-        pass
-
         difficulty = 25
         y = self.bar_rect.y + 5
         x = random.randint(self.bar_rect.x, self.bar_rect.x + self.bar_rect.width - difficulty)
-        self.dots_list.append(pygame.Rect(x, y, difficulty, self.bar_rect.height-10))
-
+        self.dots_list.append(pygame.Rect(10, 10, 10, 10))
+    '''
 
     def generate_slider(self):
         size = 5
@@ -37,21 +50,55 @@ class Slider:
         x = self.bar_rect.x
         return pygame.Rect(x, y, size, self.bar_rect.height)
 
-    def move_slider(self):
-        if self.slider_vector == "right":
-            self.slider.x += SLIDER_VEL
-        elif self.slider_vector == "left":
-            self.slider.x -= SLIDER_VEL
-
-        if self.slider.x + 5 >= self.bar_rect.width + self.bar_rect.x and self.slider_vector == "right":
-            self.slider_vector = "left"
-        elif self.slider.x <= self.bar_rect.x and self.slider_vector == "left":
-            self.slider_vector = "right"
-
     def hit_check(self):
+        if pygame.sprite.spritecollide(self.slider_bar.sprite, self.dot_group, True):
+            self.score += 1
+        else:
+            self.lives -= 1
+            self.update_lives_text()
+            return False
+
+    '''
+    def hit_check_3(self):
         for dot in self.dots_list:
             if dot.colliderect(self.slider):
                 self.dots_list.remove(dot)
                 return True
             else:
-                pass
+                self.lives -= 1
+                self.update_lives_text()
+                return []
+
+    def hit_check_2(self):
+        for dot in self.dots_list:
+            if dot.colliderect(self.slider):
+                self.dots_list.remove(dot)
+                return True
+            else:
+                self.lives -= 1
+                self.update_lives_text()
+    '''
+    def update_lives_text(self):
+        self.lives_text = self.font.render(f'{self.lives}', 1, BLACK)
+
+    def main_loop(self):
+        self.window.blit(self.bg_picture, (0, 0))
+        score_text = self.font.render(f'{self.score}', 1, BLACK)
+        self.window.blit(self.lives_text, (154, 63))
+
+        self.window.blit(self.bar_picture, self.bar_rect)
+        self.window.blit(score_text, (929, 63))
+        self.chief.update()
+        self.chief.draw(self.window)
+
+        if len(self.dot_group) <= 0:
+            for _ in range(3):
+                self.dot_group.add(Dot(randint(self.bar_rect.x + 50, self.bar_rect.x + self.bar_rect.width - 50), self.bar_rect.y+6))
+
+        self.dot_group.draw(self.window)
+        self.slider_bar.draw(self.window)
+        self.slider_bar.update()
+
+
+
+

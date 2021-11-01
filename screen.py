@@ -31,6 +31,13 @@ class MainWindow:
         self.endgame = Endgame(self.window)
         self.game_state = "slider"
 
+    def reset_game(self):
+        self.slider.lives = 3
+        self.slider.score = 0
+        self.slider.mode = 'game'
+        self.slider.dot_group.empty()
+        self.slider.slider_bar.sprite.rect.x = self.slider.bar_rect.x + 50
+
     def main_logic(self):
         run = True
         state = "main_menu"
@@ -50,10 +57,7 @@ class MainWindow:
                         mouse_pos = event.pos
                         if self.menu.button1.rect.collidepoint(mouse_pos):
                             print('slider')
-                            self.slider.lives = 3
-                            self.slider.score = 0
-                            self.slider.mode = 'game'
-                            self.slider.dot_group.empty()
+                            self.reset_game()
                             state = "slider"
                         elif self.menu.button3.rect.collidepoint(mouse_pos):
                             print('credits')
@@ -67,12 +71,7 @@ class MainWindow:
                             state = "main_menu"
                         elif self.endgame.rety_button.rect.collidepoint(mouse_pos):
                             print('slider')
-                            self.slider.lives = 3
-                            self.slider.score = 0
-                            self.slider.mode = 'game'
-                            self.slider.dot_group.empty()
-                            #todo fix the slider_bar not reseting postion
-                            self.slider.slider_bar.x = self.slider.bar_rect.x + 50
+                            self.reset_game()
                             state = "slider"
 
                 if state == "slider":
@@ -85,11 +84,13 @@ class MainWindow:
                 if game_on:
                     pass
                 else:
+                    self.endgame.update_score(self.slider.score)
                     state = "endgame"
 
             if state == "endgame":
                 self.window.blit(self.slider.sub, (0, 0))
                 self.endgame.main_loop()
+
                 for button in self.endgame.list_of_buttons:
                     if button.rect.collidepoint(pygame.mouse.get_pos()):
                         button.draw_button_active()

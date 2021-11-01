@@ -57,14 +57,15 @@ class Slider:
             self.score += 1
         else:
             self.lives -= 1
-            self.update_lives_text()
             if self.lives <= 0:
                 self.mode = 'retry_screen'
 
+    def update_lives_text(self):
+        self.lives_text = self.font.render(f'{self.lives}', 1, BLACK)
 
     def make_screenshot(self):
         self.window.blit(self.bg_picture, (0, 0))
-        score_text = self.font.render('0', 1, BLACK)
+        score_text = self.font.render(f'{self.score}', 1, BLACK)
         self.window.blit(self.lives_text, (154, 63))
         self.window.blit(self.bar_picture, self.bar_rect)
         self.window.blit(score_text, (929, 63))
@@ -101,13 +102,12 @@ class Slider:
                 self.lives -= 1
                 self.update_lives_text()
     '''
-    def update_lives_text(self):
-        self.lives_text = self.font.render(f'{self.lives}', 1, BLACK)
 
     def main_loop(self):
         if self.mode == 'game':
             self.window.blit(self.bg_picture, (0, 0))
             score_text = self.font.render(f'{self.score}', 1, BLACK)
+            self.update_lives_text()
             self.window.blit(self.lives_text, (154, 63))
 
             self.window.blit(self.bar_picture, self.bar_rect)

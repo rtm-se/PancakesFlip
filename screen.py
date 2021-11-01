@@ -3,6 +3,7 @@ import pygame
 from menu import Menu
 from slider import Slider
 from credits import Credits
+from endgame import Endgame
 
 WIDTH = 1024
 HEIGHT = 768
@@ -27,6 +28,8 @@ class MainWindow:
         self.slider = Slider(self.window)
         self.menu = Menu(self.window)
         self.credits = Credits()
+        self.endgame = Endgame(self.window)
+        self.game_state = "slider"
 
     def main_logic(self):
         run = True
@@ -47,10 +50,30 @@ class MainWindow:
                         mouse_pos = event.pos
                         if self.menu.button1.rect.collidepoint(mouse_pos):
                             print('slider')
+                            self.slider.lives = 3
+                            self.slider.score = 0
+                            self.slider.mode = 'game'
+                            self.slider.dot_group.empty()
                             state = "slider"
                         elif self.menu.button3.rect.collidepoint(mouse_pos):
                             print('credits')
                             state = 'credits'
+
+                if state == "endgame":
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        mouse_pos = event.pos
+                        if self.endgame.meny_button.rect.collidepoint(mouse_pos):
+                            print('main_menu')
+                            state = "main_menu"
+                        elif self.endgame.rety_button.rect.collidepoint(mouse_pos):
+                            print('slider')
+                            self.slider.lives = 3
+                            self.slider.score = 0
+                            self.slider.mode = 'game'
+                            self.slider.dot_group.empty()
+                            #todo fix the slider_bar not reseting postion
+                            self.slider.slider_bar.x = self.slider.bar_rect.x + 50
+                            state = "slider"
 
                 if state == "slider":
                     if event.type == pygame.KEYDOWN:
@@ -58,9 +81,23 @@ class MainWindow:
                             self.slider.hit_check()
 
             if state == "slider":
-                self.slider.main_loop()
+                game_on = self.slider.main_loop()
+                if game_on:
+                    pass
+                else:
+                    state = "endgame"
+
+            if state == "endgame":
+                self.window.blit(self.slider.sub, (0, 0))
+                self.endgame.main_loop()
+                for button in self.endgame.list_of_buttons:
+                    if button.rect.collidepoint(pygame.mouse.get_pos()):
+                        button.draw_button_active()
+                    else:
+                        button.draw_button_static()
+
             if state == "credits":
-                self.window.blit(self.credits.image, (0 ,0))
+                self.window.blit(self.credits.image, (0, 0))
             if state == "main_menu":
 
                 self.window.blit(self.menu.bg, (0, 0))

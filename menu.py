@@ -17,7 +17,7 @@ class Menu:
         self.button3 = Button(self.window, (self.window.get_width() / 100) * 35.9,
                               (self.window.get_height() / 100) * 78.5, "button3-static.png", "button3-HW.png")
 
-        self.list_of_buttons = Button.list_of_buttons
+        self.list_of_buttons = [self.button1, self.button2, self.button3]
 
 
 

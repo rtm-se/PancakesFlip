@@ -1,9 +1,7 @@
-from mainwindow import MainWindow
-from slider import Slider
+from screen import MainWindow
 
-main_win = MainWindow()
-slider = Slider(main_win.WIN)
+main = MainWindow()
+
 
 if __name__ == '__main__':
-
-    main_win.main_loop(slider)
+    main.main_logic()

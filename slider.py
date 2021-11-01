@@ -5,6 +5,7 @@ from random import randint
 from dot import Dot
 from slider_bar import SliderBar
 from chief import Chief
+from button import Button
 
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
@@ -12,7 +13,6 @@ RED = (255, 0, 0)
 PAN_COLOR = '#FFAD7E'
 
 
-#TODO add endgame state and screen
 
 class Slider:
 
@@ -20,6 +20,7 @@ class Slider:
         self.lives = 3
         self.score = 0
         self.window = win
+        self.mode = 'game'
 
         self.bg_picture = pygame.image.load(os.path.join('assets', 'slider_bg.png')).convert()
         self.bar_picture = pygame.image.load(os.path.join('assets', 'bar.png')).convert_alpha()
@@ -27,6 +28,8 @@ class Slider:
 
         self.font = pygame.font.SysFont('Roboto', 40)
         self.lives_text = self.font.render(f'{self.lives}', 1, BLACK)
+
+        self.list_of_buttons = []
 
         self.chief = pygame.sprite.Group()
         self.chief.add(Chief())
@@ -56,7 +59,27 @@ class Slider:
         else:
             self.lives -= 1
             self.update_lives_text()
-            return False
+            if self.lives <= 0:
+                self.mode = 'retry_screen'
+
+
+    def make_screenshot(self):
+        self.window.blit(self.bg_picture, (0, 0))
+        score_text = self.font.render('0', 1, BLACK)
+        self.window.blit(self.lives_text, (154, 63))
+        self.window.blit(self.bar_picture, self.bar_rect)
+        self.window.blit(score_text, (929, 63))
+        self.chief.draw(self.window)
+        self.dot_group.draw(self.window)
+        self.slider_bar.draw(self.window)
+
+        rect = self.window.get_rect()
+        sub = self.window.subsurface(rect)
+        self.sub = sub.copy()
+
+
+
+
 
     '''
     def hit_check_3(self):
@@ -82,22 +105,28 @@ class Slider:
         self.lives_text = self.font.render(f'{self.lives}', 1, BLACK)
 
     def main_loop(self):
-        self.window.blit(self.bg_picture, (0, 0))
-        score_text = self.font.render(f'{self.score}', 1, BLACK)
-        self.window.blit(self.lives_text, (154, 63))
+        if self.mode == 'game':
+            self.window.blit(self.bg_picture, (0, 0))
+            score_text = self.font.render(f'{self.score}', 1, BLACK)
+            self.window.blit(self.lives_text, (154, 63))
 
-        self.window.blit(self.bar_picture, self.bar_rect)
-        self.window.blit(score_text, (929, 63))
-        self.chief.update()
-        self.chief.draw(self.window)
+            self.window.blit(self.bar_picture, self.bar_rect)
+            self.window.blit(score_text, (929, 63))
+            self.chief.update()
+            self.chief.draw(self.window)
 
-        if len(self.dot_group) <= 0:
-            for _ in range(3):
-                self.dot_group.add(Dot(randint(self.bar_rect.x + 50, self.bar_rect.x + self.bar_rect.width - 50), self.bar_rect.y+6))
+            if len(self.dot_group) <= 0:
+                for _ in range(3):
+                    self.dot_group.add(Dot(randint(self.bar_rect.x + 50, self.bar_rect.x + self.bar_rect.width - 50), self.bar_rect.y+6))
 
-        self.dot_group.draw(self.window)
-        self.slider_bar.draw(self.window)
-        self.slider_bar.update()
+            self.dot_group.draw(self.window)
+            self.slider_bar.draw(self.window)
+            self.slider_bar.update()
+            return True
+
+        elif self.mode == 'retry_screen':
+            self.make_screenshot()
+            return False
 
 
 

@@ -76,6 +76,7 @@ class Slider:
         rect = self.window.get_rect()
         sub = self.window.subsurface(rect)
         self.sub = sub.copy()
+        self.sub = pygame.transform.smoothscale(pygame.transform.smoothscale(self.sub, (self.window.get_width()//10, self.window.get_height()//10)), (self.window.get_width(), self.window.get_height()))
 
 
 

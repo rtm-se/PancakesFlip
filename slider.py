@@ -5,7 +5,6 @@ from random import randint
 from dot import Dot
 from slider_bar import SliderBar
 from chief import Chief
-from button import Button
 
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
@@ -76,7 +75,7 @@ class Slider:
         rect = self.window.get_rect()
         sub = self.window.subsurface(rect)
         self.sub = sub.copy()
-        self.sub = pygame.transform.smoothscale(pygame.transform.smoothscale(self.sub, (self.window.get_width()//10, self.window.get_height()//10)), (self.window.get_width(), self.window.get_height()))
+        self.sub = pygame.transform.smoothscale(pygame.transform.smoothscale(self.sub, (self.window.get_width()/25, self.window.get_height()//25)), (self.window.get_width(), self.window.get_height()))
 
 
 

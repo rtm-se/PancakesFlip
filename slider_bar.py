@@ -1,7 +1,7 @@
 import pygame
 import os
 
-SLIDER_VEL = 3
+# SLIDER_VEL = 3
 
 class SliderBar(pygame.sprite.Sprite):
     def __init__(self, back_bar, x, y):
@@ -10,17 +10,18 @@ class SliderBar(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft=(x, y))
         self.slider_vector = 'right'
         self.back = back_bar
+    #todo make a new slider movement system that would sync up to the beat
 
-    def move_slider(self):
+    def move_slider(self, vel):
         if self.slider_vector == 'right':
-            self.rect.x += SLIDER_VEL
+            self.rect.x += vel
         elif self.slider_vector == 'left':
-            self.rect.x -= SLIDER_VEL
+            self.rect.x -= vel
 
-        if self.rect.x + 5 >= self.back.width + self.back.x - 30 and self.slider_vector == "right":
+        if self.rect.x + self.rect.width >= self.back.width + self.back.x and self.slider_vector == "right":
             self.slider_vector = "left"
-        elif self.rect.x <= self.back.x + 30 and self.slider_vector == "left":
+        elif self.rect.x <= self.back.x and self.slider_vector == "left":
             self.slider_vector = "right"
 
-    def update(self):
-        self.move_slider()
+    def update(self, vel):
+        self.move_slider(vel)

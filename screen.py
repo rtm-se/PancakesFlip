@@ -21,6 +21,7 @@ class MainWindow:
         self.window = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption("sliders demo")
         pygame.font.init()
+        pygame.mixer.init()
         self.font = pygame.font.SysFont('Roboto', 40)
 
         self.clock = pygame.time.Clock()
@@ -36,7 +37,7 @@ class MainWindow:
         self.slider.score = 0
         self.slider.mode = 'game'
         self.slider.dot_group.empty()
-        self.slider.slider_bar.sprite.rect.x = self.slider.bar_rect.x + 50
+        self.slider.slider_bar.sprite.rect.x = self.slider.bar_rect.x
 
     def main_logic(self):
         run = True
@@ -57,6 +58,7 @@ class MainWindow:
                         mouse_pos = event.pos
                         if self.menu.button1.rect.collidepoint(mouse_pos):
                             print('slider')
+                            self.slider.bgm.play(loops=-1)
                             self.reset_game()
                             state = "slider"
                         elif self.menu.button3.rect.collidepoint(mouse_pos):
@@ -68,10 +70,12 @@ class MainWindow:
                         mouse_pos = event.pos
                         if self.endgame.meny_button.rect.collidepoint(mouse_pos):
                             print('main_menu')
+                            self.slider.bgm.stop()
                             state = "main_menu"
                         elif self.endgame.rety_button.rect.collidepoint(mouse_pos):
                             print('slider')
                             self.reset_game()
+                            self.slider.bgm.play(loops=-1)
                             state = "slider"
 
                 if state == "slider":
@@ -84,6 +88,7 @@ class MainWindow:
                 if game_on:
                     pass
                 else:
+                    self.slider.bgm.stop()
                     self.endgame.update_score(self.slider.score)
                     state = "endgame"
 

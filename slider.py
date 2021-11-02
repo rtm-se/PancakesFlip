@@ -1,7 +1,7 @@
 import os.path
 import random
 import pygame
-from random import randint
+from random import randrange
 from dot import Dot
 from slider_bar import SliderBar
 from chief import Chief
@@ -21,9 +21,16 @@ class Slider:
         self.window = win
         self.mode = 'game'
 
+        self.hit_sound = pygame.mixer.Sound(os.path.join('assets', 'sound', 'hit.mp3'))
+        self.miss_sound = pygame.mixer.Sound(os.path.join('assets', 'sound', 'miss.mp3'))
+        self.bgm = pygame.mixer.Sound(os.path.join('assets', 'sound', 'bgm_120.mp3'))
+        self.bgm.set_volume(0.1)
+        self.hit_sound.set_volume(0.1)
+        self.miss_sound.set_volume(0.1)
+
         self.bg_picture = pygame.image.load(os.path.join('assets', 'slider_bg.png')).convert()
         self.bar_picture = pygame.image.load(os.path.join('assets', 'bar.png')).convert_alpha()
-        self.bar_rect = self.bar_picture.get_rect(topleft=(332, 139))
+        self.bar_rect = self.bar_picture.get_rect(midtop=(self.window.get_width()/2, 139))
 
         self.font = pygame.font.SysFont('Roboto', 40)
         self.lives_text = self.font.render(f'{self.lives}', 1, BLACK)
@@ -36,7 +43,7 @@ class Slider:
         self.dot_group = pygame.sprite.Group()
 
         self.slider_bar = pygame.sprite.GroupSingle()
-        self.slider_bar.add(SliderBar(self.bar_rect, self.bar_rect.x + 50, self.bar_rect.y))
+        self.slider_bar.add(SliderBar(self.bar_rect, self.bar_rect.x, self.bar_rect.y))
 
     '''
     def generate_dot(self):
@@ -54,8 +61,10 @@ class Slider:
 
     def hit_check(self):
         if pygame.sprite.spritecollide(self.slider_bar.sprite, self.dot_group, True):
+            self.hit_sound.play()
             self.score += 1
         else:
+            self.miss_sound.play()
             self.lives -= 1
             if self.lives <= 0:
                 self.mode = 'retry_screen'
@@ -117,17 +126,21 @@ class Slider:
 
             if len(self.dot_group) <= 0:
                 for _ in range(3):
-                    self.dot_group.add(Dot(randint(self.bar_rect.x + 50, self.bar_rect.x + self.bar_rect.width - 50), self.bar_rect.y+6))
+                    self.dot_group.add(Dot(randrange(self.bar_rect.x + int(self.bar_rect.width / 8) , self.bar_rect.x + self.bar_rect.width - int(self.bar_rect.width / 8), int(self.bar_rect.width / 8)), self.bar_rect.y+6))
 
             self.dot_group.draw(self.window)
             self.slider_bar.draw(self.window)
-            self.slider_bar.update()
+            self.slider_bar.update(int((self.bar_rect.width - self.slider_bar.sprite.image.get_width())/240))
+            self.bars_draw()
             return True
 
         elif self.mode == 'retry_screen':
             self.make_screenshot()
             return False
 
-
+    def bars_draw(self):
+            pygame.draw.line(self.window, 'red', self.bar_rect.midtop, self.bar_rect.midbottom)
+            pygame.draw.line(self.window, 'red', (self.bar_rect.topleft[0], self.bar_rect.topleft[1], ), (self.bar_rect.bottomleft[0], self.bar_rect.bottomleft[1]))
+            pygame.draw.line(self.window, 'red', (self.bar_rect.topright[0], self.bar_rect.topright[1], ), (self.bar_rect.bottomright[0], self.bar_rect.bottomright[1]))
 
 

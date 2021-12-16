@@ -130,7 +130,7 @@ class Slider:
 
             self.dot_group.draw(self.window)
             self.slider_bar.draw(self.window)
-            self.slider_bar.update(int((self.bar_rect.width - self.slider_bar.sprite.image.get_width())/240))
+            self.slider_bar.update(int(self.bar_rect.width/2/120))
             self.bars_draw()
             return True
 
@@ -138,9 +138,10 @@ class Slider:
             self.make_screenshot()
             return False
 
+
     def bars_draw(self):
             pygame.draw.line(self.window, 'red', self.bar_rect.midtop, self.bar_rect.midbottom)
-            pygame.draw.line(self.window, 'red', (self.bar_rect.topleft[0], self.bar_rect.topleft[1], ), (self.bar_rect.bottomleft[0], self.bar_rect.bottomleft[1]))
-            pygame.draw.line(self.window, 'red', (self.bar_rect.topright[0], self.bar_rect.topright[1], ), (self.bar_rect.bottomright[0], self.bar_rect.bottomright[1]))
+            pygame.draw.line(self.window, 'red', self.bar_rect.topleft, self.bar_rect.bottomleft)
+            pygame.draw.line(self.window, 'red', self.bar_rect.topright, self.bar_rect.bottomright)
 
 

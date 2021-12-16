@@ -21,7 +21,10 @@ class MainWindow:
         self.window = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption("sliders demo")
         pygame.font.init()
+        pygame.mixer.pre_init(44100, -16, 2, 512)
         pygame.mixer.init()
+        pygame.mixer.music.load('assets/sound/bgm_120.mp3')
+        pygame.mixer.music.set_volume(0.1)
         self.font = pygame.font.SysFont('Roboto', 40)
 
         self.clock = pygame.time.Clock()
@@ -31,6 +34,11 @@ class MainWindow:
         self.credits = Credits()
         self.endgame = Endgame(self.window)
         self.game_state = "slider"
+
+    def update_fps(self):
+        fps = str(int(self.clock.get_fps()))
+        fps_text = self.font.render(fps, 1, pygame.Color("coral"))
+        return fps_text
 
     def reset_game(self):
         self.slider.lives = 3
@@ -58,7 +66,8 @@ class MainWindow:
                         mouse_pos = event.pos
                         if self.menu.button1.rect.collidepoint(mouse_pos):
                             print('slider')
-                            self.slider.bgm.play(loops=-1)
+                            #self.slider.bgm.play(loops=-1)
+                            pygame.mixer.music.play()
                             self.reset_game()
                             state = "slider"
                         elif self.menu.button3.rect.collidepoint(mouse_pos):
@@ -70,12 +79,14 @@ class MainWindow:
                         mouse_pos = event.pos
                         if self.endgame.meny_button.rect.collidepoint(mouse_pos):
                             print('main_menu')
-                            self.slider.bgm.stop()
+                            #self.slider.bgm.stop()
+                            pygame.mixer.music.stop()
                             state = "main_menu"
                         elif self.endgame.rety_button.rect.collidepoint(mouse_pos):
                             print('slider')
                             self.reset_game()
-                            self.slider.bgm.play(loops=-1)
+                            #self.slider.bgm.play(loops=-1)
+                            pygame.mixer.music.play()
                             state = "slider"
 
                 if state == "slider":
@@ -85,10 +96,12 @@ class MainWindow:
 
             if state == "slider":
                 game_on = self.slider.main_loop()
+                self.window.blit(self.update_fps(), (10, 0))
                 if game_on:
                     pass
                 else:
-                    self.slider.bgm.stop()
+                    #self.slider.bgm.stop()
+                    pygame.mixer.music.stop()
                     self.endgame.update_score(self.slider.score)
                     state = "endgame"
 

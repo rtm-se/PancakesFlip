@@ -16,15 +16,17 @@ PAN_COLOR = '#FFAD7E'
 class Slider:
 
     def __init__(self, win):
+        self.combo = 0
         self.lives = 3
         self.score = 0
+        self.combo_clear = 0
         self.window = win
         self.mode = 'game'
 
         self.hit_sound = pygame.mixer.Sound(os.path.join('assets', 'sound', 'hit.mp3'))
         self.miss_sound = pygame.mixer.Sound(os.path.join('assets', 'sound', 'miss.mp3'))
-        self.bgm = pygame.mixer.Sound(os.path.join('assets', 'sound', 'bgm_120.mp3'))
-        self.bgm.set_volume(0.1)
+        #self.bgm = pygame.mixer.Sound(os.path.join('assets', 'sound', 'bgm_120.mp3'))
+        #self.bgm.set_volume(0.1)
         self.hit_sound.set_volume(0.1)
         self.miss_sound.set_volume(0.1)
 
@@ -43,7 +45,8 @@ class Slider:
         self.dot_group = pygame.sprite.Group()
 
         self.slider_bar = pygame.sprite.GroupSingle()
-        self.slider_bar.add(SliderBar(self.bar_rect, self.bar_rect.x, self.bar_rect.y))
+        self.slider_bar_ref = SliderBar(self.bar_rect, self.bar_rect.x, self.bar_rect.y)
+        self.slider_bar.add(self.slider_bar_ref)
 
     '''
     def generate_dot(self):
@@ -59,15 +62,46 @@ class Slider:
         x = self.bar_rect.x
         return pygame.Rect(x, y, size, self.bar_rect.height)
 
+
+    def slider_edge_check(self):
+        if self.slider_bar_ref.rect.x == self.bar_rect.x:
+            self.dot_group.empty()
+            if self.combo == 3:
+                self.combo_clear = 0
+                self.combo = 0
+            else:
+                self.combo_clear += 1
+                if self.combo_clear == 3:
+                    self.lives -= 1
+                    self.combo_clear = 0
+                    self.check_lives()
+                self.combo = 0
+            coords_for_bars = []
+            while len(coords_for_bars) < 3:
+                coord = (randrange(self.bar_rect.x + int(self.bar_rect.width / 8),
+                          self.bar_rect.x + self.bar_rect.width - int(self.bar_rect.width / 8),
+                          int(self.bar_rect.width / 8)))
+                if coord not in coords_for_bars:
+                    coords_for_bars.append(coord)
+            for x_pos in coords_for_bars:
+                self.dot_group.add(Dot(x_pos, self.bar_rect.y + 6))
+
+    def check_lives(self):
+        if self.lives <= 0:
+            self.mode = 'retry_screen'
+
     def hit_check(self):
         if pygame.sprite.spritecollide(self.slider_bar.sprite, self.dot_group, True):
             self.hit_sound.play()
-            self.score += 1
+            self.combo += 1
         else:
             self.miss_sound.play()
             self.lives -= 1
-            if self.lives <= 0:
-                self.mode = 'retry_screen'
+            self.check_lives()
+        if self.combo == 3:
+            self.score += 1
+
+
 
     def update_lives_text(self):
         self.lives_text = self.font.render(f'{self.lives}', 1, BLACK)
@@ -114,6 +148,7 @@ class Slider:
 
     def main_loop(self):
         if self.mode == 'game':
+            self.slider_edge_check()
             self.window.blit(self.bg_picture, (0, 0))
             score_text = self.font.render(f'{self.score}', 1, BLACK)
             self.update_lives_text()
@@ -121,12 +156,14 @@ class Slider:
 
             self.window.blit(self.bar_picture, self.bar_rect)
             self.window.blit(score_text, (929, 63))
-            self.chief.update()
+
+            self.chief.update('idle')
+
             self.chief.draw(self.window)
 
-            if len(self.dot_group) <= 0:
-                for _ in range(3):
-                    self.dot_group.add(Dot(randrange(self.bar_rect.x + int(self.bar_rect.width / 8) , self.bar_rect.x + self.bar_rect.width - int(self.bar_rect.width / 8), int(self.bar_rect.width / 8)), self.bar_rect.y+6))
+            #if len(self.dot_group) <= 0:
+            #    for _ in range(3):
+            #        self.dot_group.add(Dot(randrange(self.bar_rect.x + int(self.bar_rect.width / 8) , self.bar_rect.x + self.bar_rect.width - int(self.bar_rect.width / 8), int(self.bar_rect.width / 8)), self.bar_rect.y+6))
 
             self.dot_group.draw(self.window)
             self.slider_bar.draw(self.window)

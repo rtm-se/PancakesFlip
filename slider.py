@@ -40,7 +40,8 @@ class Slider:
         self.list_of_buttons = []
 
         self.chief = pygame.sprite.Group()
-        self.chief.add(Chief())
+        self.chief_pointer = Chief()
+        self.chief.add(self.chief_pointer)
 
         self.dot_group = pygame.sprite.Group()
 
@@ -99,6 +100,7 @@ class Slider:
             self.lives -= 1
             self.check_lives()
         if self.combo == 3:
+            self.chief_pointer.flip_anim_counter += 60
             self.score += 1
 
 
@@ -157,7 +159,7 @@ class Slider:
             self.window.blit(self.bar_picture, self.bar_rect)
             self.window.blit(score_text, (929, 63))
 
-            self.chief.update('idle')
+            self.chief.update()
 
             self.chief.draw(self.window)
 

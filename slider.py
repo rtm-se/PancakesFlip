@@ -46,7 +46,7 @@ class Slider:
         self.dot_group = pygame.sprite.Group()
 
         self.slider_bar = pygame.sprite.GroupSingle()
-        self.slider_bar_ref = SliderBar(self.bar_rect, self.bar_rect.x, self.bar_rect.y)
+        self.slider_bar_ref = SliderBar(self.bar_rect, self.bar_rect.x, self.bar_rect.y, self)
         self.slider_bar.add(self.slider_bar_ref)
 
     '''
@@ -65,27 +65,26 @@ class Slider:
 
 
     def slider_edge_check(self):
-        if self.slider_bar_ref.rect.x == self.bar_rect.x:
-            self.dot_group.empty()
-            if self.combo == 3:
+        self.dot_group.empty()
+        if self.combo == 3:
+            self.combo_clear = 0
+            self.combo = 0
+        else:
+            self.combo_clear += 1
+            if self.combo_clear == 3:
+                self.lives -= 1
                 self.combo_clear = 0
-                self.combo = 0
-            else:
-                self.combo_clear += 1
-                if self.combo_clear == 3:
-                    self.lives -= 1
-                    self.combo_clear = 0
-                    self.check_lives()
-                self.combo = 0
-            coords_for_bars = []
-            while len(coords_for_bars) < 3:
-                coord = (randrange(self.bar_rect.x + int(self.bar_rect.width / 8),
-                          self.bar_rect.x + self.bar_rect.width - int(self.bar_rect.width / 8),
-                          int(self.bar_rect.width / 8)))
-                if coord not in coords_for_bars:
-                    coords_for_bars.append(coord)
-            for x_pos in coords_for_bars:
-                self.dot_group.add(Dot(x_pos, self.bar_rect.y + 6))
+                self.check_lives()
+            self.combo = 0
+        coords_for_bars = []
+        while len(coords_for_bars) < 3:
+            coord = (randrange(self.bar_rect.x + int(self.bar_rect.width / 8),
+                      self.bar_rect.x + self.bar_rect.width - int(self.bar_rect.width / 8),
+                      int(self.bar_rect.width / 8)))
+            if coord not in coords_for_bars:
+                coords_for_bars.append(coord)
+        for x_pos in coords_for_bars:
+            self.dot_group.add(Dot(x_pos, self.bar_rect.y + 6))
 
     def check_lives(self):
         if self.lives <= 0:
@@ -150,7 +149,6 @@ class Slider:
 
     def main_loop(self):
         if self.mode == 'game':
-            self.slider_edge_check()
             self.window.blit(self.bg_picture, (0, 0))
             score_text = self.font.render(f'{self.score}', 1, BLACK)
             self.update_lives_text()

@@ -23,8 +23,8 @@ class MainWindow:
         pygame.font.init()
         pygame.mixer.pre_init(44100, -16, 2, 512)
         pygame.mixer.init()
-        pygame.mixer.music.load('assets/sound/bgm_120.mp3')
-        pygame.mixer.music.set_volume(0.1)
+        pygame.mixer.music.load('assets/sound/long_story_short.mp3')
+        pygame.mixer.music.set_volume(0.3)
         self.font = pygame.font.SysFont('Roboto', 40)
 
         self.clock = pygame.time.Clock()
@@ -51,7 +51,6 @@ class MainWindow:
         run = True
         state = "main_menu"
         while run:
-            self.clock.tick(FPS)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -126,7 +125,7 @@ class MainWindow:
                     else:
                         button.draw_button_static()
             pygame.display.update()
-
+            self.clock.tick(FPS)
 
 if __name__ == "__main__":
     MW = MainWindow()
